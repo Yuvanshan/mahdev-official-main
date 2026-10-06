@@ -1,0 +1,150 @@
+/**
+ * Firestore Categories Repository
+ * Phase 23 - Real Firestore Data Integration
+ */
+
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  query,
+  where,
+  onSnapshot,
+  Unsubscribe,
+} from 'firebase/firestore';
+import { db, sanitizeForFirestore } from '../../lib/firebase';
+import { FirestoreCategory, DivisionId } from '../../types/firestore';
+import { isSameDivision } from './divisions';
+
+const CACHE_TTL_MS = 1000 * 60 * 20; // 20 min cache
+let cachedCategories: { data: FirestoreCategory[]; timestamp: number } | null = null;
+
+export function getDefaultCategories(): FirestoreCategory[] {
+  // Phase 60: Real Data Architecture - Zero fake categories by default.
+  // Categories are populated dynamically from Firestore or created via Admin Portal.
+  return [];
+}
+
+export const firestoreCategoriesService = {
+  /**
+   * Fetch categories with division filter and caching
+   */
+  async getCategories(division?: DivisionId, forceRefresh = false): Promise<FirestoreCategory[]> {
+    const now = Date.now();
+    let allCategories: FirestoreCategory[] = [];
+
+    if (!forceRefresh && cachedCategories && now - cachedCategories.timestamp < CACHE_TTL_MS) {
+      allCategories = cachedCategories.data;
+    } else {
+      try {
+        const snap = await getDocs(collection(db, 'categories'));
+        if (!snap.empty) {
+          allCategories = snap.docs.map((d) => ({
+            ...d.data(),
+            id: d.id,
+          })) as FirestoreCategory[];
+          cachedCategories = { data: allCategories, timestamp: now };
+        } else {
+          allCategories = [];
+          cachedCategories = { data: [], timestamp: now };
+        }
+      } catch (err) {
+        console.warn('[Firestore Categories] getCategories error:', err);
+        allCategories = cachedCategories?.data || [];
+      }
+    }
+
+    if (division) {
+      return allCategories.filter(
+        (c) => isSameDivision(c.division, division) || isSameDivision((c as any).divisionId, division)
+      );
+    }
+    return allCategories;
+  },
+
+  /**
+   * Save or update category
+   */
+  async saveCategory(id: string, data: Partial<FirestoreCategory>): Promise<void> {
+    const docRef = doc(db, 'categories', id);
+    const payload = sanitizeForFirestore({ ...data, id });
+    if (cachedCategories) {
+      const idx = cachedCategories.data.findIndex((c) => c.id === id);
+      if (idx >= 0) {
+        cachedCategories.data[idx] = { ...cachedCategories.data[idx], ...payload } as FirestoreCategory;
+      } else {
+        cachedCategories.data.push(payload as FirestoreCategory);
+      }
+    }
+    try {
+      await setDoc(docRef, payload, { merge: true });
+    } catch (err) {
+      console.error('[Firestore Categories] save error:', err);
+      throw err;
+    }
+  },
+
+  /**
+   * Permanently delete category from Firestore
+   */
+  async deleteCategory(id: string): Promise<void> {
+    const docRef = doc(db, 'categories', id);
+    if (cachedCategories) {
+      cachedCategories.data = cachedCategories.data.filter((c) => c.id !== id);
+    }
+    try {
+      await deleteDoc(docRef);
+    } catch (err) {
+      console.error('[Firestore Categories] delete error:', err);
+      throw err;
+    }
+  },
+
+  /**
+   * Realtime listener for categories
+   */
+  subscribeCategories(
+    onDataOrDivision: ((data: FirestoreCategory[]) => void) | DivisionId | undefined,
+    onDataCallback?: (data: FirestoreCategory[]) => void
+  ): Unsubscribe {
+    const division = typeof onDataOrDivision === 'string' ? onDataOrDivision : undefined;
+    const onData = typeof onDataOrDivision === 'function' ? onDataOrDivision : onDataCallback || (() => {});
+
+    const colRef = collection(db, 'categories');
+
+    return onSnapshot(
+      colRef,
+      (snap) => {
+        const data = snap.docs.map((d) => ({
+          ...d.data(),
+          id: d.id,
+        })) as FirestoreCategory[];
+        cachedCategories = { data, timestamp: Date.now() };
+        if (division) {
+          const filtered = data.filter(
+            (c) => isSameDivision(c.division, division) || isSameDivision((c as any).divisionId, division)
+          );
+          onData(filtered);
+        } else {
+          onData(data);
+        }
+      },
+      (err) => {
+        console.warn('[Firestore Categories] Listener error:', err);
+        const fallback = cachedCategories?.data || [];
+        if (division) {
+          onData(
+            fallback.filter(
+              (c) => isSameDivision(c.division, division) || isSameDivision((c as any).divisionId, division)
+            )
+          );
+        } else {
+          onData(fallback);
+        }
+      }
+    );
+  },
+};

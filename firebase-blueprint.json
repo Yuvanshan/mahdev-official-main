@@ -1,0 +1,394 @@
+{
+  "entities": {
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Global website and company configuration settings document at settings/site",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string", "description": "Brand name of the company" },
+        "legalName": { "type": "string", "description": "Official registered legal entity name" },
+        "tagline": { "type": "string", "description": "Corporate tagline and slogan" },
+        "description": { "type": "string", "description": "Corporate description and overview" },
+        "logoUrl": { "type": "string", "description": "Primary logo asset URL" },
+        "faviconUrl": { "type": "string", "description": "Favicon URL" },
+        "currencyCode": { "type": "string", "description": "ISO currency code (e.g., LKR, USD)" },
+        "currencySymbol": { "type": "string", "description": "Currency symbol (e.g., Rs, $)" },
+        "phoneNumbers": { "type": "array", "description": "Corporate phone hotlines" },
+        "email": { "type": "string", "format": "email", "description": "Official company contact email" },
+        "addresses": { "type": "array", "description": "Office and headquarter physical addresses" },
+        "maintenanceMode": { "type": "boolean", "description": "Global maintenance lock status" },
+        "maintenanceTitle": { "type": "string", "description": "Maintenance notice title" },
+        "maintenanceMessage": { "type": "string", "description": "Maintenance notice message body" },
+        "maintenanceImageUrl": { "type": "string", "description": "Maintenance visual banner asset URL" },
+        "enableStockAlertEmails": { "type": "boolean", "description": "Operations inventory alert emails" },
+        "enableSmsAlerts": { "type": "boolean", "description": "Client SMS and WhatsApp transaction alerts" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last updated ISO timestamp" },
+        "version": { "type": "string", "description": "Site schema or release version" }
+      },
+      "required": ["companyName", "legalName", "email", "currencyCode", "maintenanceMode", "updatedAt"]
+    },
+    "Division": {
+      "title": "Division",
+      "description": "Mahdev enterprise business division",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Division display name" },
+        "slug": { "type": "string", "description": "URL slug" },
+        "shortDescription": { "type": "string", "description": "Short summary" },
+        "description": { "type": "string", "description": "Comprehensive division overview" },
+        "imageUrl": { "type": "string", "description": "Hero background or preview image URL" },
+        "logoUrl": { "type": "string", "description": "Division logo asset URL" },
+        "route": { "type": "string", "description": "Frontend route path" },
+        "isPublished": { "type": "boolean", "description": "Publish status" },
+        "order": { "type": "number", "description": "Display order sort index" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "slug", "description", "route", "isPublished", "order", "createdAt", "updatedAt"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "Division service offering",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Service name" },
+        "slug": { "type": "string", "description": "Service URL slug" },
+        "divisionId": { "type": "string", "description": "Associated division ID" },
+        "description": { "type": "string", "description": "Detailed service description" },
+        "imageUrl": { "type": "string", "description": "Service image URL" },
+        "price": { "type": "number", "description": "Starting or fixed price" },
+        "currency": { "type": "string", "description": "Currency code" },
+        "bookingEnabled": { "type": "boolean", "description": "Whether clients can book appointments" },
+        "isPublished": { "type": "boolean", "description": "Publish visibility status" },
+        "order": { "type": "number", "description": "Display sort order index" },
+        "sku": { "type": "string", "description": "Unique SKU / service reference code" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "slug", "divisionId", "description", "price", "currency", "bookingEnabled", "isPublished", "order", "createdAt", "updatedAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "E-commerce or physical catalog item",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Product title" },
+        "slug": { "type": "string", "description": "Product URL slug" },
+        "description": { "type": "string", "description": "Full product description" },
+        "shortDescription": { "type": "string", "description": "Short summary description" },
+        "price": { "type": "number", "description": "Regular selling price" },
+        "currency": { "type": "string", "description": "Currency code" },
+        "discountPrice": { "type": "number", "description": "Discounted price if on sale" },
+        "images": { "type": "array", "description": "List of product image URLs" },
+        "categoryId": { "type": "string", "description": "Category document reference ID" },
+        "stock": { "type": "number", "description": "Available inventory quantity" },
+        "sku": { "type": "string", "description": "Unique SKU code" },
+        "isAvailable": { "type": "boolean", "description": "In stock / available flag" },
+        "isPublished": { "type": "boolean", "description": "Publish visibility status" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "slug", "description", "price", "currency", "images", "categoryId", "stock", "sku", "isAvailable", "isPublished", "createdAt", "updatedAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Classification category for products and services",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Category display name" },
+        "slug": { "type": "string", "description": "Category URL slug" },
+        "description": { "type": "string", "description": "Category description" },
+        "imageUrl": { "type": "string", "description": "Category banner or thumbnail URL" },
+        "isPublished": { "type": "boolean", "description": "Publish status" },
+        "order": { "type": "number", "description": "Display order index" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "slug", "isPublished", "order", "createdAt", "updatedAt"]
+    },
+    "Milestone": {
+      "title": "Milestone",
+      "description": "Company corporate milestone and history timeline entry",
+      "type": "object",
+      "properties": {
+        "year": { "type": "string", "description": "Milestone year (e.g. 2024)" },
+        "title": { "type": "string", "description": "Milestone headline" },
+        "description": { "type": "string", "description": "Milestone narrative" },
+        "imageUrl": { "type": "string", "description": "Milestone image URL" },
+        "icon": { "type": "string", "description": "Lucide icon identifier" },
+        "order": { "type": "number", "description": "Timeline sequence order index" },
+        "isPublished": { "type": "boolean", "description": "Publish status" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["year", "title", "description", "order", "isPublished", "createdAt", "updatedAt"]
+    },
+    "TrustedCompany": {
+      "title": "TrustedCompany",
+      "description": "Partner or enterprise client showcase logo",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Organization name" },
+        "logoUrl": { "type": "string", "description": "Logo asset URL" },
+        "website": { "type": "string", "description": "Official company website URL" },
+        "description": { "type": "string", "description": "Partner summary or partnership description" },
+        "order": { "type": "number", "description": "Display sort order" },
+        "isPublished": { "type": "boolean", "description": "Publish visibility status" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "logoUrl", "order", "isPublished", "createdAt", "updatedAt"]
+    },
+    "Portfolio": {
+      "title": "Portfolio",
+      "description": "Showcase portfolio project and case study",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Project title" },
+        "slug": { "type": "string", "description": "Project URL slug" },
+        "description": { "type": "string", "description": "Case study overview" },
+        "divisionId": { "type": "string", "description": "Associated division ID" },
+        "images": { "type": "array", "description": "Project media image gallery URLs" },
+        "category": { "type": "string", "description": "Project category" },
+        "location": { "type": "string", "description": "Project geographic location" },
+        "date": { "type": "string", "description": "Execution or launch date" },
+        "sku": { "type": "string", "description": "Unique SKU / project reference code" },
+        "isPublished": { "type": "boolean", "description": "Publish status" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "slug", "description", "divisionId", "images", "category", "isPublished", "createdAt", "updatedAt"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "Customer feedback, review, or corporate endorsement",
+      "type": "object",
+      "properties": {
+        "customerName": { "type": "string", "description": "Client or reviewer full name" },
+        "company": { "type": "string", "description": "Client company or organization" },
+        "message": { "type": "string", "description": "Testimonial review text" },
+        "rating": { "type": "number", "description": "Review star rating (1-5)" },
+        "imageUrl": { "type": "string", "description": "Author avatar photo URL" },
+        "isPublished": { "type": "boolean", "description": "Public display approval status" },
+        "order": { "type": "number", "description": "Display order index" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerName", "message", "rating", "isPublished", "order", "createdAt", "updatedAt"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Service appointment and reservation record",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string", "description": "Customer User UID or client ID" },
+        "serviceId": { "type": "string", "description": "Service document ID" },
+        "divisionId": { "type": "string", "description": "Division document ID" },
+        "bookingDate": { "type": "string", "description": "Scheduled date (YYYY-MM-DD)" },
+        "bookingTime": { "type": "string", "description": "Scheduled time window" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "in_progress", "completed", "cancelled"], "description": "Operational booking status" },
+        "notes": { "type": "string", "description": "Client notes and special requirements" },
+        "amount": { "type": "number", "description": "Agreed booking cost or deposit" },
+        "currency": { "type": "string", "description": "Currency code" },
+        "paymentStatus": { "type": "string", "enum": ["unpaid", "deposit_paid", "paid", "refunded"], "description": "Payment settlement status" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "serviceId", "divisionId", "bookingDate", "status", "amount", "currency", "paymentStatus", "createdAt", "updatedAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "E-commerce customer purchase order",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string", "description": "Customer User UID" },
+        "items": { "type": "array", "description": "Ordered line items" },
+        "subtotal": { "type": "number", "description": "Order subtotal amount" },
+        "discount": { "type": "number", "description": "Applied discount amount" },
+        "total": { "type": "number", "description": "Final total payable amount" },
+        "currency": { "type": "string", "description": "Currency code" },
+        "paymentStatus": { "type": "string", "enum": ["pending", "paid", "failed", "refunded"] },
+        "orderStatus": { "type": "string", "enum": ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"] },
+        "shippingAddress": { "type": "object", "description": "Destination shipping delivery address" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "items", "subtotal", "discount", "total", "currency", "paymentStatus", "orderStatus", "createdAt", "updatedAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Registered account profile document (Authentication credentials handled securely by Firebase Auth)",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string", "description": "User display name" },
+        "email": { "type": "string", "format": "email", "description": "Account email address" },
+        "phone": { "type": "string", "description": "Phone number" },
+        "photoUrl": { "type": "string", "description": "Avatar photo URL" },
+        "role": { "type": "string", "enum": ["customer", "staff", "manager", "admin", "superAdmin"], "description": "RBAC security role" },
+        "status": { "type": "string", "enum": ["active", "suspended", "pending"], "description": "Account operational status" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role", "status", "createdAt", "updatedAt"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Processed financial payment record (Sensitive card data never stored in Firestore)",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string", "description": "Associated order ID if applicable" },
+        "bookingId": { "type": "string", "description": "Associated booking ID if applicable" },
+        "customerId": { "type": "string", "description": "Customer UID" },
+        "amount": { "type": "number", "description": "Transaction payment amount" },
+        "currency": { "type": "string", "description": "Currency code (LKR, USD)" },
+        "gateway": { "type": "string", "description": "Payment gateway (e.g. stripe, lankapay, bank_transfer)" },
+        "transactionId": { "type": "string", "description": "External payment gateway transaction reference" },
+        "status": { "type": "string", "enum": ["pending", "paid", "failed", "cancelled", "refunded"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["amount", "currency", "gateway", "status", "createdAt", "updatedAt"]
+    },
+    "ContactSubmission": {
+      "title": "ContactSubmission",
+      "description": "Inquiry form submission from public visitors",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Sender full name" },
+        "email": { "type": "string", "format": "email", "description": "Sender email" },
+        "phone": { "type": "string", "description": "Sender telephone contact" },
+        "subject": { "type": "string", "description": "Inquiry subject" },
+        "message": { "type": "string", "description": "Inquiry message content" },
+        "status": { "type": "string", "enum": ["new", "in_review", "replied", "archived"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "subject", "message", "status", "createdAt", "updatedAt"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "System, promotional, or critical public banner announcement",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Announcement title" },
+        "message": { "type": "string", "description": "Announcement message body" },
+        "imageUrl": { "type": "string", "description": "Banner visual asset URL" },
+        "type": { "type": "string", "enum": ["info", "warning", "promotion", "update"], "description": "Announcement type" },
+        "isPublished": { "type": "boolean", "description": "Publish status" },
+        "startAt": { "type": "string", "format": "date-time", "description": "Active start date" },
+        "endAt": { "type": "string", "format": "date-time", "description": "Active end date" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "message", "type", "isPublished", "createdAt", "updatedAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable security and data mutation audit record (Restricted to authorized administrators)",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Admin or staff UID who performed the action" },
+        "action": { "type": "string", "description": "Action performed (e.g., update_product, delete_service)" },
+        "collection": { "type": "string", "description": "Target Firestore collection name" },
+        "documentId": { "type": "string", "description": "Target document ID" },
+        "before": { "type": "object", "description": "State before mutation" },
+        "after": { "type": "object", "description": "State after mutation" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Log entry timestamp" }
+      },
+      "required": ["userId", "action", "collection", "documentId", "createdAt"]
+    },
+    "GalleryItem": {
+      "title": "GalleryItem",
+      "description": "Media showcase gallery item for photography, videography, and project highlights",
+      "type": "object",
+      "properties": {
+        "division": { "type": "string", "description": "Operating business division ID" },
+        "title": { "type": "string", "description": "Media title" },
+        "url": { "type": "string", "description": "Full asset URL" },
+        "thumbnailUrl": { "type": "string", "description": "Optimized thumbnail URL" },
+        "type": { "type": "string", "enum": ["image", "video"], "description": "Media type" },
+        "tag": { "type": "string", "description": "Category or tag label" },
+        "category": { "type": "string", "description": "Category taxonomy reference" },
+        "caption": { "type": "string", "description": "Caption description" },
+        "aspectRatio": { "type": "string", "description": "Visual aspect ratio" },
+        "tags": { "type": "array", "description": "Collection of searchable tags" },
+        "order": { "type": "number", "description": "Display order index" },
+        "sku": { "type": "string", "description": "Unique SKU / photo reference code" },
+        "status": { "type": "string", "enum": ["published", "hidden"], "description": "Visibility status" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["division", "title", "url", "type", "status"]
+    }
+  },
+  "firestore": {
+    "/settings/site": {
+      "schema": "SiteSettings",
+      "description": "Global website configuration, branding, contact info, and maintenance mode"
+    },
+    "/gallery/{itemId}": {
+      "schema": "GalleryItem",
+      "description": "Showcase visual gallery media items across divisions"
+    },
+    "/divisions/{divisionId}": {
+      "schema": "Division",
+      "description": "The 5 primary Mahdev business divisions: sws, u1-studio, it-solutions, travels, online-mart"
+    },
+    "/services/{serviceId}": {
+      "schema": "Service",
+      "description": "Service catalog offerings across divisions"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Physical and digital product merchandise catalog"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Taxonomy categories for products and services"
+    },
+    "/milestones/{milestoneId}": {
+      "schema": "Milestone",
+      "description": "Company corporate historical timeline milestones"
+    },
+    "/trustedCompanies/{companyId}": {
+      "schema": "TrustedCompany",
+      "description": "Client and ecosystem partner showcase logos"
+    },
+    "/portfolio/{portfolioId}": {
+      "schema": "Portfolio",
+      "description": "Showcase portfolio projects and case studies"
+    },
+    "/testimonials/{testimonialId}": {
+      "schema": "Testimonial",
+      "description": "Customer and client reviews and endorsements"
+    },
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Service appointments and reservation records"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "E-commerce customer purchase orders and invoices"
+    },
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "User account profiles (Authentication credentials in Firebase Auth)"
+    },
+    "/payments/{paymentId}": {
+      "schema": "Payment",
+      "description": "Payment transactions (No sensitive card information stored)"
+    },
+    "/contactSubmissions/{submissionId}": {
+      "schema": "ContactSubmission",
+      "description": "Inquiries submitted via contact forms"
+    },
+    "/announcements/{announcementId}": {
+      "schema": "Announcement",
+      "description": "System-wide and marketing banner announcements"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Immutable security and mutation audit trail restricted to authorized administrators"
+    }
+  }
+}
